@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  # NGINX container
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    image: nginx:1.18.0-alpine
+    ports:
+      - 8081:80
+    volumes:
+      - ./nginx:/etc/nginx
+      - ./nginx_cache:/data/nginx/cache
+      - ./logs:/var/logs/nginx
+  # PyPI container
+  pypi-server:
+    image: pypiserver/pypiserver:latest
+    volumes:
+      - type: bind
+        source: ./packages
+        target: /data/packages
+    command: -P . -a . /data/packages
+    restart: always
